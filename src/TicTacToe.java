@@ -7,44 +7,94 @@ public class TicTacToe {
 
     //Pseudocode for TTT
         /*
-            1. Initialize board using clearBoard, showBoard,
-            initialize variables for current player (X) and moveCount (0),
-            create a scanner for player input boolean for gameOver (false)
-            2. Create a do while loop for the entire game (while(!gameover)),
-            prompt current player to enter a move (row and column) using getRangedInt [1-3],
-            subtract 1 to turn into 0-2 range
-            3. Validate moving using isValidMove, if valid update board with current player's symbol,
-            increment moveCount, showBoard, if invalid reprompt plus error message
+        START PROGRAM
+        Display pretty header
+        Create Scanner to get user input
+
+        DO   // outer loop for getYNConfirm
+            Clear board
+            Display board
+            Set currentPlayer to X
+            Set moveCount to 0
+            Set gameOver to false
+
+        DO   // inner game loop that runs until gameOver
+            Display currentPlayer's turn
+            Prompt player for row (1–3), convert to 0–2 using -1
+            Prompt player for column (1–3), convert to 0–2 using -1
+
+        WHILE move is not valid
+            Display error message
+            Prompt again for row and column (1–3), convert to 0–2 using -1
+        END WHILE
+
+        Place currentPlayer's symbol (X/O) on the board
+        Increment moveCount
+        Display the board
+
+        IF moveCount >= 5 AND isWin(currentPlayer)
+            Display win message
+            Set gameOver to true
+
+        ELSE IF isTie(moveCount)
+            Display tie message
+            Set gameOver to true
+        END IF
+
+        IF gameOver is false
+            Switch currentPlayer (X to O, or O to X)
+        END IF
+
+        WHILE gameOver is false
+
+            Ask user if they want to play again (Y/N)
+        WHILE user chooses Yes
+
+        END PROGRAM
         */
 
     public static void main(String[] args) {
         SafeInput.prettyHeader("Welcome to Tic Tac Toe");
         Scanner in = new Scanner(System.in);
 
-        clearBoard();
-        showBoard();
-
-        String currentPlayer = "X";
-        int moveCount = 0;
-        boolean gameOver = false;
-
+        boolean keepPlaying;
         do {
-            System.out.println(currentPlayer + "'s turn");
-            int row = SafeInput.getRangedInt(in, "Enter row [1-3]", 1, 3) - 1;
-            int col = SafeInput.getRangedInt(in, "Enter column [1-3]", 1, 3) - 1;
-
-            // Validate the move
-            while (!isValidMove(row, col))
-            {
-                System.out.println("Invalid move — space already taken.");
-                row = SafeInput.getRangedInt(in, "Enter row [1-3]", 1, 3) - 1;
-                col = SafeInput.getRangedInt(in, "Enter column [1-3]", 1, 3) - 1;
-
-            }
-            board[row][col] = currentPlayer;
-            moveCount++;
+            clearBoard();
             showBoard();
-        }while (!gameOver);
+
+            String currentPlayer = "X";
+            int moveCount = 0;
+            boolean gameOver = false;
+
+            do {
+                System.out.println(currentPlayer + "'s turn");
+                int row = SafeInput.getRangedInt(in, "Enter row [1-3]", 1, 3) - 1;
+                int col = SafeInput.getRangedInt(in, "Enter column [1-3]", 1, 3) - 1;
+
+                // Validate the move
+                while (!isValidMove(row, col)) {
+                    System.out.println("Invalid move — space already taken.");
+                    row = SafeInput.getRangedInt(in, "Enter row [1-3]", 1, 3) - 1;
+                    col = SafeInput.getRangedInt(in, "Enter column [1-3]", 1, 3) - 1;
+
+                }
+                board[row][col] = currentPlayer;
+                moveCount++;
+                showBoard();
+
+                if (moveCount >= 5 && isWin(currentPlayer)) {
+                    System.out.println(currentPlayer + " wins!");
+                    gameOver = true;
+                } else if (isTie(moveCount)) {
+                    System.out.println("It's a tie!");
+                    gameOver = true;
+                }
+                if (!gameOver) {
+                    currentPlayer = currentPlayer.equals("X") ? "O" : "X";
+                }
+            } while (!gameOver);
+            keepPlaying = SafeInput.getYNConfirm(in, "Play again [Y/N]?");
+        }while(keepPlaying);
     }
 
 
